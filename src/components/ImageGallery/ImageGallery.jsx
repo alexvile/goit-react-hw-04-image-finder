@@ -5,17 +5,17 @@ import { fetchImages } from 'components/services/images-api';
 export default class ImageGallery extends Component {
   state = {
     images: [],
-    page: 1,
     status: 'idle',
-    error: 'null',
+    error: '',
+    package_length: null,
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps, _) {
     const prevQuery = prevProps.query;
     const currentQuery = this.props.query;
 
-    const prevPage = prevState.page;
-    const currentPage = this.state.page;
+    const prevPage = prevProps.page;
+    const currentPage = this.props.page;
 
     if (prevQuery !== currentQuery || prevPage !== currentPage) {
       this.setState({ status: 'pending' });
@@ -23,14 +23,33 @@ export default class ImageGallery extends Component {
       fetchImages(currentQuery, currentPage)
         .then(images => {
           console.log(images);
-          this.setState({ images: images.hits, status: 'resolved' });
+
+          // For new query
+          if (prevQuery !== currentQuery) {
+            this.setState({
+              images: images.hits,
+              status: 'resolved',
+              package_length: images.hits.length,
+            });
+          }
+
+          // For addition query
+          if (prevQuery === currentQuery) {
+            this.setState(prevState => ({
+              status: 'resolved',
+              images: [...prevState.images, ...images.hits],
+              package_length: images.hits.length,
+            }));
+          }
         })
         .catch(error => this.setState({ error, status: 'rejected' }));
     }
   }
 
   render() {
-    const { images, status, error } = this.state;
+    const { images, status, error, package_length } = this.state;
+    const { query, pageIncrement } = this.props;
+
     if (status === 'idle') {
       return <p>Введите картинку</p>;
     }
@@ -43,20 +62,21 @@ export default class ImageGallery extends Component {
     if (status === 'resolved') {
       return (
         <div>
-          <ul>
-            {images.length > 0 ? (
-              <div>
-                {images.map(({ id, webformatURL, tags }) => (
-                  <ImageGalleryItem key={id} url={webformatURL} title={tags} />
-                ))}
-                {/* <button type="button" onClick={this.loadMore}>
-                  Load more
-                </button> */}
-              </div>
-            ) : (
-              <p>Nothing found for your query: "{this.props.query}"</p>
-            )}
-          </ul>
+          {images.length > 0 ? (
+            <ul>
+              {images.map(({ id, webformatURL, tags }) => (
+                <ImageGalleryItem key={id} url={webformatURL} title={tags} />
+              ))}
+            </ul>
+          ) : (
+            <p>Nothing found for your query: "{query}"</p>
+          )}
+
+          {package_length >= 12 && (
+            <button type="button" onClick={pageIncrement}>
+              Load more
+            </button>
+          )}
         </div>
       );
     }

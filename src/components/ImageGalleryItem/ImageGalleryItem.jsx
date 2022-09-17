@@ -1,3 +1,7 @@
 export const ImageGalleryItem = ({ url, title }) => {
-  return <img width="200" src={url} alt={title} />;
+  return (
+    <span>
+      <img width="200" src={url} alt={title} />
+    </span>
+  );
 };

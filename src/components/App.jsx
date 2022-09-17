@@ -9,23 +9,26 @@ export default class App extends Component {
     page: 1,
   };
 
+  handleFormSubmit = (query, page) => {
+    this.setState({ query, page });
+  };
+
   loadMore = () => {
     this.setState(prevState => ({
       page: prevState.page + 1,
     }));
   };
-  handleFormSubmit = (query, page) => {
-    this.setState({ query, page });
-  };
+
   render() {
     return (
       <div>
-        <button type="button" onClick={this.loadMore}>
-          Load more
-        </button>
         ----------------
         <Searchbar onSubmit={this.handleFormSubmit} />
-        <ImageGallery query={this.state.query} />
+        <ImageGallery
+          query={this.state.query}
+          page={this.state.page}
+          pageIncrement={this.loadMore}
+        />
       </div>
     );
   }
