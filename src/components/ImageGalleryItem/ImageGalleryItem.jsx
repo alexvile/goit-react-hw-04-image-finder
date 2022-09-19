@@ -1,7 +1,12 @@
-export const ImageGalleryItem = ({ url, title }) => {
+import { ImageContainer, Image } from './ImageGalleryItem.styled';
+export const ImageGalleryItem = ({ id, url, title, onImgClick }) => {
   return (
-    <span>
-      <img width="200" src={url} alt={title} />
-    </span>
+    <ImageContainer
+      onClick={() => {
+        onImgClick(id);
+      }}
+    >
+      <Image width="200" src={url} alt={title} />
+    </ImageContainer>
   );
 };

@@ -2,7 +2,7 @@ import { Component } from 'react';
 
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
-
+import { Container } from './App.styled';
 export default class App extends Component {
   state = {
     query: '',
@@ -20,16 +20,12 @@ export default class App extends Component {
   };
 
   render() {
+    const { query, page } = this.state;
     return (
-      <div>
-        ----------------
+      <Container>
         <Searchbar onSubmit={this.handleFormSubmit} />
-        <ImageGallery
-          query={this.state.query}
-          page={this.state.page}
-          pageIncrement={this.loadMore}
-        />
-      </div>
+        <ImageGallery query={query} page={page} pageIncrement={this.loadMore} />
+      </Container>
     );
   }
 }

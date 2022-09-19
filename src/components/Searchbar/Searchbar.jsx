@@ -1,4 +1,11 @@
 import { Component } from 'react';
+import {
+  SearchContainer,
+  SearchForm,
+  SearchFormButton,
+  SearchFormButtonLabel,
+  SearchFormInput,
+} from './Searchbar.styled';
 
 export default class Searchbar extends Component {
   state = {
@@ -12,13 +19,14 @@ export default class Searchbar extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
+    const { query, page } = this.state;
 
-    if (this.state.query.trim() === '') {
+    if (query.trim() === '') {
       alert('empty string');
       return;
     }
 
-    this.props.onSubmit(this.state.query, this.state.page);
+    this.props.onSubmit(query, page);
     this.formReset();
   };
   handleChange = e => {
@@ -26,24 +34,21 @@ export default class Searchbar extends Component {
   };
   render() {
     return (
-      <header>
-        <form onSubmit={this.handleSubmit}>
-          <button type="submit">
-            <span>Search</span>
-          </button>
-          <label>
-            Search query
-            <input
-              autoComplete="off"
-              autoFocus
-              placeholder="Search images and photos"
-              type="text"
-              onChange={this.handleChange}
-              value={this.state.query}
-            />
-          </label>
-        </form>
-      </header>
+      <SearchContainer>
+        <SearchForm onSubmit={this.handleSubmit}>
+          <SearchFormButton type="submit">
+            <SearchFormButtonLabel>Label</SearchFormButtonLabel>
+          </SearchFormButton>
+          <SearchFormInput
+            autoComplete="off"
+            autoFocus
+            placeholder="Search images and photos"
+            type="text"
+            onChange={this.handleChange}
+            value={this.state.query}
+          />
+        </SearchForm>
+      </SearchContainer>
     );
   }
 }
