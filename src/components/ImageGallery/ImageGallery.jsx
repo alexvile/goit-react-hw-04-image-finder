@@ -4,6 +4,8 @@ import { fetchImages } from 'components/services/images-api';
 import Modal from 'components/Modal/Modal';
 import { GalleryContainer } from './ImageGallery.styled';
 import { Button } from 'components/Button/Button';
+import { Loader } from 'components/Loader/Loader';
+import { NothingFound } from 'components/NothingFound/NothingFound';
 
 export default class ImageGallery extends Component {
   state = {
@@ -77,7 +79,7 @@ export default class ImageGallery extends Component {
           // this.scroll();
           setTimeout(() => {
             this.scroll();
-          }, 200);
+          }, 300);
         });
     }
   }
@@ -95,12 +97,7 @@ export default class ImageGallery extends Component {
     const { query, pageIncrement } = this.props;
 
     if (status === 'idle') {
-      return (
-        <div>
-          <p>Введите картинку</p>
-          {loader && <p>Loading</p>}
-        </div>
-      );
+      return <div>{loader && <Loader />}</div>;
     }
     if (status === 'rejected') {
       return <p>{error.message}</p>;
@@ -124,10 +121,9 @@ export default class ImageGallery extends Component {
               ))}
             </GalleryContainer>
           ) : (
-            <p>Nothing found for your query: "{query}"</p>
+            <NothingFound query={query} />
           )}
-          {loader && <p>Loading</p>}
-
+          {loader && <Loader />}
           {showModal && (
             <Modal onClose={this.toggleModal}>
               <img
@@ -139,9 +135,6 @@ export default class ImageGallery extends Component {
 
           {package_length >= 12 && !loader && (
             <Button onClick={pageIncrement} />
-            // <button type="button" onClick={pageIncrement}>
-            //   Load more
-            // </button>
           )}
         </div>
       );
