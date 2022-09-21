@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { ToastContainer } from 'react-toastify';
 
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
@@ -25,6 +26,7 @@ export default class App extends Component {
       <Container>
         <Searchbar onSubmit={this.handleFormSubmit} />
         <ImageGallery query={query} page={page} pageIncrement={this.loadMore} />
+        <ToastContainer autoClose={2500} />
       </Container>
     );
   }

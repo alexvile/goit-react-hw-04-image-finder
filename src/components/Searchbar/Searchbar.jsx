@@ -1,5 +1,7 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import {
   SearchContainer,
@@ -24,7 +26,8 @@ export default class Searchbar extends Component {
     const { query, page } = this.state;
 
     if (query.trim() === '') {
-      alert('empty string');
+      // toast.error('empty string');
+      toast.warn('You should to write something to search');
       return;
     }
 

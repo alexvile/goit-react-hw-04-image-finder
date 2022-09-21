@@ -128,13 +128,9 @@ export default class ImageGallery extends Component {
           {loader && <Loader />}
           {showModal && (
             <Modal onClose={this.toggleModal}>
-              <img
-                src={modalImg.largeImageURL}
-                alt={modalImg.largeImageURL.tags}
-              />
+              <img src={modalImg.largeImageURL} alt={modalImg.tags} />
             </Modal>
           )}
-
           {package_length >= 12 && !loader && (
             <Button onClick={pageIncrement} />
           )}
