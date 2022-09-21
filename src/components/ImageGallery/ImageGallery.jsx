@@ -1,4 +1,6 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
 import { fetchImages } from 'components/services/images-api';
 import Modal from 'components/Modal/Modal';
@@ -141,3 +143,9 @@ export default class ImageGallery extends Component {
     }
   }
 }
+
+ImageGallery.propTypes = {
+  page: PropTypes.number.isRequired,
+  query: PropTypes.string.isRequired,
+  pageIncrement: PropTypes.func.isRequired,
+};
