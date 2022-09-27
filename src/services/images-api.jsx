@@ -7,6 +7,7 @@ export function fetchImages(query, page) {
     `${BASE_URL}?key=${API_KEY}&q=${query}&image_type=photo&orientation=horizontal&per_page=${IMG_QTY}&page=${page}`
   ).then(response => {
     if (response.ok) {
+      // console.log(response);
       return response.json();
     }
     return Promise.reject(new Error('Ups! Something went wrong'));

@@ -2,7 +2,7 @@ import { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
-import { fetchImages } from 'components/services/images-api';
+import { fetchImages } from 'services/images-api';
 import Modal from 'components/Modal/Modal';
 import { GalleryContainer } from './ImageGallery.styled';
 import { Button } from 'components/Button/Button';

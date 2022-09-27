@@ -18,7 +18,7 @@ export default class Searchbar extends Component {
   };
 
   formReset = () => {
-    this.setState({ query: '', page: 1 });
+    this.setState({ page: 1 });
   };
 
   handleSubmit = e => {
