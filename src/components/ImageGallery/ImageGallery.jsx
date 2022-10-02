@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
@@ -9,134 +9,98 @@ import { Button } from 'components/Button/Button';
 import { Loader } from 'components/Loader/Loader';
 import { NothingFound } from 'components/NothingFound/NothingFound';
 
-export default class ImageGallery extends Component {
-  state = {
-    images: [],
-    status: 'idle',
-    error: '',
-    loader: false,
-    package_length: null,
-    showModal: false,
-    modalImg: null,
+export default function ImageGallery({ page, query, pageIncrement }) {
+  const [images, setImages] = useState([]);
+  const [status, setStatus] = useState('idle');
+  const [error, setError] = useState('');
+  const [loader, setLoader] = useState(false);
+  const [packageLength, setPackageLength] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [modalImg, setModalImg] = useState(null);
+
+  const toggleModal = () => {
+    setShowModal(!showModal);
   };
 
-  toggleModal = () => {
-    this.setState(({ showModal }) => ({
-      showModal: !showModal,
-    }));
+  const onImgClick = id => {
+    const clickedImg = images.find(image => image.id === id);
+    setModalImg(clickedImg);
+    toggleModal();
   };
 
-  onImgClick = id => {
-    const clickedImg = this.state.images.find(image => image.id === id);
-    this.setState({ modalImg: clickedImg });
-    this.toggleModal();
-  };
-
-  scroll = () => {
+  const scroll = () => {
     window.scrollTo({
       top: document.documentElement.scrollHeight,
       behavior: 'smooth',
     });
   };
 
-  componentDidUpdate(prevProps, _) {
-    const prevQuery = prevProps.query;
-    const currentQuery = this.props.query;
-
-    const prevPage = prevProps.page;
-    const currentPage = this.props.page;
-
-    if (prevQuery !== currentQuery || prevPage < currentPage) {
-      // this.setState({ status: 'pending' });
-      this.setState({ loader: true });
-
-      fetchImages(currentQuery, currentPage)
-        .then(images => {
-          // console.log(images);
-
-          // For new query
-          if (prevQuery !== currentQuery) {
-            this.setState({
-              images: images.hits,
-              loader: false,
-              status: 'resolved',
-              package_length: images.hits.length,
-            });
-          }
-
-          // For addition query
-          if (prevQuery === currentQuery) {
-            this.setState(prevState => ({
-              status: 'resolved',
-              loader: false,
-              images: [...prevState.images, ...images.hits],
-              package_length: images.hits.length,
-            }));
-          }
-        })
-        .catch(error => this.setState({ error, status: 'rejected' }))
-        .finally(() => {
-          // console.log('scroll');
-          // console.log(document.documentElement.scrollHeight);
-          // this.scroll();
-          setTimeout(() => {
-            this.scroll();
-          }, 300);
-        });
+  useEffect(() => {
+    // first loading
+    if (query === '') {
+      return;
     }
+    // new query
+    if (page === 1) {
+      setStatus('idle');
+      setImages([]);
+    }
+
+    setLoader(true);
+
+    fetchImages(query, page)
+      .then(images => {
+        setStatus('resolved');
+        setLoader(false);
+        setImages(prevState => [...prevState, ...images.hits]);
+        setPackageLength(images.hits.length);
+      })
+      .catch(error => {
+        setError(error);
+        setStatus('rejected');
+      })
+      .finally(() => {
+        setTimeout(() => {
+          scroll();
+        }, 300);
+      });
+  }, [page, query]);
+
+  if (status === 'idle') {
+    return <div>{loader && <Loader />}</div>;
   }
 
-  render() {
-    const {
-      images,
-      status,
-      error,
-      package_length,
-      loader,
-      showModal,
-      modalImg,
-    } = this.state;
-    const { query, pageIncrement } = this.props;
+  if (status === 'rejected') {
+    return <p>{error.message}</p>;
+  }
 
-    if (status === 'idle') {
-      return <div>{loader && <Loader />}</div>;
-    }
-    if (status === 'rejected') {
-      return <p>{error.message}</p>;
-    }
-    // if (status === 'pending') {
-    //   return <p>Загружаем...</p>;
-    // }
-    if (status === 'resolved') {
-      return (
-        <div>
-          {images.length > 0 ? (
-            <GalleryContainer>
-              {images.map(({ id, webformatURL, tags }) => (
-                <ImageGalleryItem
-                  key={id}
-                  id={id}
-                  url={webformatURL}
-                  title={tags}
-                  onImgClick={this.onImgClick}
-                />
-              ))}
-            </GalleryContainer>
-          ) : (
-            <NothingFound query={query} />
-          )}
-          {loader && <Loader />}
-          {showModal && (
-            <Modal onClose={this.toggleModal}>
-              <img src={modalImg.largeImageURL} alt={modalImg.tags} />
-            </Modal>
-          )}
-          {package_length >= 12 && !loader && (
-            <Button onClick={pageIncrement} />
-          )}
-        </div>
-      );
-    }
+  if (status === 'resolved') {
+    return (
+      <div>
+        {images.length > 0 ? (
+          <GalleryContainer>
+            {images.map(({ id, webformatURL, tags }) => (
+              <ImageGalleryItem
+                key={id}
+                id={id}
+                url={webformatURL}
+                title={tags}
+                onImgClick={onImgClick}
+              />
+            ))}
+          </GalleryContainer>
+        ) : (
+          <NothingFound query={query} />
+        )}
+        {loader && <Loader />}
+        {showModal && (
+          <Modal onClose={toggleModal}>
+            <img src={modalImg.largeImageURL} alt={modalImg.tags} />
+          </Modal>
+        )}
+        {packageLength >= 12 && !loader && <Button onClick={pageIncrement} />}
+      </div>
+    );
   }
 }
 
