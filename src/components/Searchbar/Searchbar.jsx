@@ -14,11 +14,11 @@ import {
 
 export default function Searchbar({ onSubmit }) {
   const [query, setQuery] = useState('');
-  const [page, setPage] = useState(1);
+  // const [page, setPage] = useState(1);
 
-  const formReset = () => {
-    setPage(1);
-  };
+  // const formReset = () => {
+  //   setPage(1);
+  // };
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -28,8 +28,8 @@ export default function Searchbar({ onSubmit }) {
       return;
     }
 
-    onSubmit(query, page);
-    formReset();
+    onSubmit(query);
+    // formReset();
   };
 
   const handleChange = e => {

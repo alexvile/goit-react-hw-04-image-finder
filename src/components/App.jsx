@@ -9,9 +9,9 @@ export default function App() {
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
 
-  const handleFormSubmit = (query, page) => {
+  const handleFormSubmit = query => {
     setQuery(query);
-    setPage(page);
+    setPage(1);
   };
 
   const loadMore = () => {

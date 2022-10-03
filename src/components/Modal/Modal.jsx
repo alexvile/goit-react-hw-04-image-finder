@@ -8,18 +8,18 @@ const modalRoot = document.getElementById('modal-root');
 
 export default function Modal({ onClose, children }) {
   useEffect(() => {
+    const closeModal = e => {
+      if (e.code === 'Escape') {
+        onClose();
+      }
+    };
+
     window.addEventListener('keydown', closeModal);
 
     return () => {
       window.removeEventListener('keydown', closeModal);
     };
-  });
-
-  const closeModal = e => {
-    if (e.code === 'Escape') {
-      onClose();
-    }
-  };
+  }, [onClose]);
 
   const closeByClick = e => {
     if (e.currentTarget === e.target) {
